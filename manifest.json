@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "FanDuel Decimal Converter",
+  "version": "1.0",
+  "description": "Converte odds americanas para decimais no FanDuel.",
+  "content_scripts": [
+    {
+      "matches": ["*://*.fanduel.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
