@@ -14,11 +14,16 @@ function convertToDecimal(americanOdd) {
 
 // Função principal que varre os elementos de forma inteligente
 function appendDecimalOdds() {
-    // Pega todas as tags 'span' que ainda não foram convertidas
-    // O FanDuel normalmente coloca as odds dentro de spans
-    const elements = document.querySelectorAll('span:not([data-convertido="true"])'); 
+    // Pega todas as tags 'span'. Removemos o filtro para permitir atualizações
+    // quando o FanDuel altera o texto da odd (removendo nosso span decimal).
+    const elements = document.querySelectorAll('span'); 
 
     elements.forEach(el => {
+        // Se já foi convertido e ainda tem o span filho (a odd decimal), ignoramos (está atualizado)
+        if (el.getAttribute('data-convertido') === 'true' && el.children.length > 0) {
+            return;
+        }
+
         // A condição el.children.length === 0 garante que estamos a olhar para o 
         // elemento final de texto e não para caixas maiores que contêm vários textos
         if (el.children.length === 0) {
@@ -53,8 +58,10 @@ function appendDecimalOdds() {
 appendDecimalOdds();
 
 // Observa mudanças no DOM (como quando você clica noutro jogador ou rola a página)
+let debounceTimer;
 const observer = new MutationObserver(() => {
-    appendDecimalOdds();
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(appendDecimalOdds, 100);
 });
 
 observer.observe(document.body, {
